@@ -798,32 +798,32 @@ const G=(d,lane,t,v)=>({d,lane,t,v});
 const FG=(d,side,slot,t,v)=>({d,side,slot,t,v});
 const FORK_L=[-2.4,-1.05], FORK_R=[1.05,2.4];
 const LEVELS=[
-{name:'INDUCTION',bossName:'WARDEN-01',hue:0.52,speed:20,start:5,len:420,bossHp:16,phases:1,
+{name:'INDUCTION',bossName:'WARDEN-01',hue:0.52,speed:30,start:5,len:420,bossHp:16,phases:1,
  gates:[G(45,1,'add',1),G(70,0,'add',1),G(95,1,'add',2),G(120,2,'add',1),G(145,1,'add',2),G(170,0,'add',1),G(195,2,'add',2),G(220,1,'add',1),G(245,0,'add',2),G(270,1,'add',1),G(295,2,'add',2),G(320,0,'add',1),G(345,1,'add',2),G(370,2,'add',1),G(395,1,'add',2)]},
-{name:'FIRST SPARK',bossName:'BULWARK',hue:0.48,speed:23,start:5,len:460,bossHp:75,phases:1,
+{name:'FIRST SPARK',bossName:'BULWARK',hue:0.48,speed:35,start:5,len:460,bossHp:75,phases:1,
  gates:[G(45,1,'add',2),G(75,0,'add',3),G(105,1,'mul',2),G(135,1,'sub',5),G(165,2,'add',4),G(195,1,'add',3),G(225,0,'mul',2),G(255,1,'add',4),G(285,2,'sub',6),G(315,0,'add',5),G(345,1,'mul',2),G(375,2,'add',5),G(405,1,'add',4),G(435,0,'add',5)]},
-{name:'CROSSROADS',bossName:'TRIAX',hue:0.85,speed:26,start:5,len:500,bossHp:170,phases:1,
+{name:'CROSSROADS',bossName:'TRIAX',hue:0.85,speed:39,start:5,len:500,bossHp:170,phases:1,
  gates:[G(45,1,'add',3),G(75,0,'add',5),G(75,2,'mul',2),G(110,1,'add',4),G(140,0,'add',5),G(140,2,'mul',2),G(175,1,'add',6),G(205,2,'add',4),G(235,0,'sub',8),G(265,1,'mul',2),G(295,2,'add',6),G(325,0,'add',7),G(355,1,'sub',10),G(385,2,'mul',2),G(415,1,'add',8),G(445,0,'add',7)]},
-{name:'THE GATE',bossName:'GOLIATH',hue:0.75,speed:29,start:5,len:600,bossHp:340,phases:1,
+{name:'THE GATE',bossName:'GOLIATH',hue:0.75,speed:44,start:5,len:600,bossHp:340,phases:1,
  gates:[G(45,1,'add',4),G(75,0,'mul',2),G(105,1,'sub',8),G(140,2,'add',6),G(175,0,'mul',2),G(175,1,'mul',0.5),G(210,2,'add',8),G(245,1,'sub',10),G(280,0,'add',9),G(315,2,'mul',2),G(350,1,'add',10),G(385,0,'sub',14),G(420,2,'mul',2),G(455,1,'add',12),G(490,0,'add',10),G(525,2,'sub',16),G(560,1,'mul',2)],
  obstacles:[{type:'gap',d:160,open:1},{type:'barrier',d:365,lanes:[1,2]}]},
-{name:'THE HINGE',bossName:'HINGE PRIME',hue:0.09,speed:34,start:5,len:960,bossHp:1600,phases:2,
+{name:'THE HINGE',bossName:'HINGE PRIME',hue:0.09,speed:51,start:5,len:960,bossHp:1600,phases:2,
  gates:[G(50,1,'add',5),G(80,0,'mul',2),G(110,1,'sub',10),G(140,2,'add',8),G(170,1,'mul',2),G(200,0,'sub',12),G(230,2,'add',10),G(260,1,'add',9),
    G(640,1,'add',10),G(670,2,'mul',2),G(700,1,'sub',14),G(730,0,'add',12),G(760,2,'add',14),G(790,1,'sub',16),G(820,0,'mul',2),G(850,1,'add',15),G(880,2,'sub',18),G(910,1,'add',16),G(940,0,'add',14)],
  forks:[{d0:300,d1:600,gates:[
    FG(320,'L',0,'mul',2),FG(350,'L',1,'sub',10),FG(380,'L',0,'add',12),FG(410,'L',1,'mul',2),FG(440,'L',0,'sub',12),FG(470,'L',1,'add',14),FG(500,'L',0,'mul',2),FG(530,'L',1,'add',12),FG(560,'L',0,'sub',14),
    FG(320,'R',0,'add',9),FG(350,'R',1,'add',9),FG(380,'R',0,'mul',2),FG(410,'R',1,'sub',10),FG(440,'R',0,'add',11),FG(470,'R',1,'mul',2),FG(500,'R',0,'add',12),FG(530,'R',1,'sub',12),FG(560,'R',0,'mul',2)
  ]}]},
-{name:'MIRAGE PROTOCOL',bossName:'MIRAGE',hue:0.95,speed:39,start:5,len:1160,bossHp:850,phases:2,
+{name:'MIRAGE PROTOCOL',bossName:'MIRAGE',hue:0.95,speed:59,start:5,len:1160,bossHp:850,phases:2,
  gates:[G(50,1,'add',6),G(80,0,'add',8),G(110,1,'add',8),G(140,0,'mul',2),G(140,1,'mul',0.5),G(140,2,'mul',2),G(175,1,'add',10),G(205,2,'sub',14),G(235,0,'add',9),G(265,1,'mul',2),G(295,2,'add',11),G(325,0,'sub',16),
    G(640,0,'mul',0.5),G(640,1,'mul',2),G(640,2,'mul',0.5),G(670,2,'add',12),G(700,1,'sub',18),G(730,0,'add',14),G(760,2,'mul',2),G(790,1,'add',16),G(820,0,'sub',20),G(850,0,'add',20),G(850,1,'mul',0.5),G(850,2,'add',20),G(880,1,'add',15),G(910,2,'sub',20),G(940,1,'add',15),G(970,0,'mul',2),G(1000,2,'sub',24),G(1030,1,'add',18),G(1060,0,'add',20)],
  obstacles:[{type:'gap',d:400,open:0},{type:'gap',d:460,open:2},{type:'gap',d:520,open:1}],
  hazards:[{d:560,len:60,lane:1},{d:900,len:70,lane:0}]},
-{name:'OVERCLOCK',bossName:'DREADNOUGHT',hue:0.62,speed:45,start:5,len:1450,bossHp:6200,phases:2,
+{name:'OVERCLOCK',bossName:'DREADNOUGHT',hue:0.62,speed:68,start:5,len:1450,bossHp:6200,phases:2,
  gates:[G(50,1,'add',10),G(80,2,'add',10),G(110,1,'mul',2),G(140,0,'sub',20),G(170,1,'add',20),G(200,0,'add',20),G(230,2,'mul',3),G(260,1,'sub',24),G(290,0,'add',22),G(320,2,'add',24),G(350,1,'mul',2),G(380,0,'sub',28),
    G(650,2,'add',20),G(680,1,'sub',30),G(710,0,'add',25),G(740,1,'add',28),G(770,2,'mul',2),G(800,0,'sub',34),G(830,1,'add',30),G(860,2,'add',32),G(890,1,'mul',2),G(920,0,'sub',38),G(950,2,'add',34),G(980,0,'add',30),G(1180,0,'add',40),G(1180,2,'mul',2),G(1210,1,'sub',44),G(1240,0,'add',36),G(1270,2,'add',38),G(1300,1,'mul',2),G(1330,0,'sub',48),G(1360,2,'add',40),G(1390,1,'add',36),G(1420,0,'mul',2)],
  hazards:[{d:420,len:60,lane:1},{d:1000,len:70,lane:2}]},
-{name:'TRIUNE',bossName:'TRIUNE CORE',hue:0.35,speed:52,start:5,len:1600,bossHp:20000,phases:3,
+{name:'TRIUNE',bossName:'TRIUNE CORE',hue:0.35,speed:78,start:5,len:1600,bossHp:20000,phases:3,
  gates:[G(50,1,'add',10),G(80,1,'mul',2),G(110,0,'add',15),G(140,2,'sub',20),G(170,1,'add',16),G(200,0,'mul',2),G(230,2,'add',18),G(260,1,'sub',24),
    G(640,1,'add',20),G(670,2,'sub',30),G(700,0,'mul',2),G(730,1,'add',24),G(760,2,'add',22),G(790,0,'sub',34),G(820,1,'mul',2),G(850,2,'add',26),
    G(1160,1,'add',25),G(1190,0,'add',40),G(1220,1,'sub',50),G(1250,2,'add',30),G(1280,0,'mul',2),G(1310,1,'sub',44),G(1340,2,'add',32),G(1370,0,'add',35),G(1400,1,'mul',2),G(1430,2,'sub',48),G(1460,0,'add',36),G(1490,1,'add',34),G(1520,2,'mul',2),G(1550,0,'sub',52),G(1580,1,'add',38)],
@@ -835,13 +835,13 @@ const LEVELS=[
    FG(920,'L',0,'add',20),FG(950,'L',0,'mul',2),FG(980,'L',1,'sub',30),FG(1010,'L',0,'mul',2),FG(1040,'L',1,'add',25),FG(1070,'L',0,'sub',32),FG(1100,'L',1,'mul',2),
    FG(920,'R',0,'mul',2),FG(950,'R',1,'add',20),FG(980,'R',0,'sub',28),FG(1010,'R',1,'add',22),FG(1040,'R',0,'mul',2),FG(1070,'R',1,'sub',30),FG(1100,'R',0,'add',24)
  ]}]},
-{name:'REDLINE',bossName:'VELOCITY',hue:0.0,speed:60,start:5,len:1900,bossHp:5200,phases:3,
+{name:'REDLINE',bossName:'VELOCITY',hue:0.0,speed:90,start:5,len:1900,bossHp:5200,phases:3,
  gates:[G(50,1,'add',15),G(80,0,'mul',2),G(110,1,'sub',20),G(140,2,'add',20),G(170,1,'add',25),G(200,0,'sub',40),G(230,1,'add',25),G(260,2,'mul',2),G(290,1,'sub',35),G(320,0,'add',30),
    G(620,2,'add',30),G(650,0,'add',40),G(680,1,'sub',50),G(710,2,'add',40),G(740,1,'add',40),G(770,0,'mul',0.5),G(770,1,'mul',2),G(770,2,'sub',55),G(800,0,'add',45),G(830,1,'sub',60),G(860,2,'add',45),G(890,1,'add',45),G(920,0,'add',50),
    G(1300,0,'add',50),G(1330,1,'sub',70),G(1360,2,'add',50),G(1390,1,'add',55),G(1420,0,'mul',2),G(1450,2,'sub',80),G(1480,0,'add',55),G(1510,1,'sub',75),G(1540,2,'add',60),G(1570,1,'add',60),G(1600,0,'mul',2),G(1630,2,'sub',90),G(1660,0,'add',65),G(1690,1,'add',62),G(1720,2,'sub',85),G(1750,0,'add',70),G(1780,1,'mul',2),G(1810,2,'add',68),G(1840,0,'sub',95),G(1870,1,'add',72)],
  obstacles:[{type:'gap',d:360,open:0},{type:'gap',d:420,open:2},{type:'gap',d:480,open:1},{type:'gap',d:540,open:0}],
  hazards:[{d:590,len:60,lane:1},{d:960,len:70,lane:2},{d:1230,len:60,lane:0}]},
-{name:'OMEGA GAUNTLET',bossName:'OMEGA CORE',hue:0.55,speed:70,start:5,len:2300,bossHp:45000,phases:4,
+{name:'OMEGA GAUNTLET',bossName:'OMEGA CORE',hue:0.55,speed:105,start:5,len:2300,bossHp:45000,phases:4,
  gates:[G(50,1,'add',20),G(80,2,'mul',2),G(110,1,'sub',30),G(140,0,'add',25),G(170,2,'add',30),G(200,1,'sub',35),G(230,0,'mul',2),G(260,2,'add',32),G(290,1,'sub',40),
    G(650,1,'add',30),G(680,2,'sub',80),G(710,0,'mul',2),G(740,1,'add',35),G(770,2,'add',38),G(800,0,'sub',90),G(830,1,'mul',2),G(860,2,'add',40),G(890,1,'sub',95),G(920,0,'add',42),
    G(1350,1,'add',50),G(1380,0,'sub',150),G(1410,1,'add',60),G(1440,1,'sub',150),G(1470,2,'add',60),G(1500,0,'sub',160),G(1500,1,'mul',2),G(1500,2,'mul',0.5),G(1530,0,'add',70),G(1560,1,'sub',170),G(1590,2,'add',65),G(1620,0,'mul',2),G(1650,1,'add',75),G(1680,2,'sub',180),G(1710,0,'add',80),
@@ -1014,7 +1014,7 @@ function steer(dt){
   const b=getBounds();
   S.targetX=clamp(S.targetX,b[0],b[1]);
   S.prevX=S.x;
-  S.x=clamp(lerp(S.x,S.targetX,Math.min(1,dt*9)),b[0],b[1]);
+  S.x=clamp(lerp(S.x,S.targetX,Math.min(1,dt*13)),b[0],b[1]);
   S.roll=clamp((S.x-S.prevX)/Math.max(dt,0.001)*0.09,-0.55,0.55);
 }
 function updateMenu(dt){
@@ -1152,7 +1152,7 @@ function updateCamera(dt){
   if(S.state==='MENU'){ tx=Math.sin(S.t*0.12)*2.6; ty=5.6+Math.sin(S.t*0.09)*0.5; tz=-S.dist+10.5; ly=1.6; }
   camera.position.x=lerp(camera.position.x,tx,Math.min(1,dt*4));
   camera.position.y=lerp(camera.position.y,ty,Math.min(1,dt*4));
-  camera.position.z=lerp(camera.position.z,tz,Math.min(1,dt*7));
+  camera.position.z=lerp(camera.position.z,tz,Math.min(1,dt*20));
   if(S.shake>0){
     S.shake=Math.max(0,S.shake-dt*1.7);
     camera.position.x+=rand(-1,1)*S.shake*0.28;
