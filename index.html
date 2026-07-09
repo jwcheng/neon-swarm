@@ -64,6 +64,7 @@ body{font-family:'Rajdhani',sans-serif;color:#cfe9f5;user-select:none;-webkit-us
 </head>
 <body>
 <div id="app"></div>
+<audio id="bgm" src="music.mp3" loop preload="auto"></audio>
 <div id="hud">
   <div id="lvlTag"></div>
   <div id="count"></div>
@@ -130,8 +131,10 @@ const COUNT_CAP=9999;
 
 /* ---------------- audio (WebAudio synth, lazy init) ---------------- */
 let AC=null, master=null, ambOsc=null, muted=(localStorage.getItem('ns_mute')==='1');
+const bgmEl=document.getElementById('bgm');
+bgmEl.volume=0.4;
 function initAudio(){
-  if(AC) return;
+  if(!AC){
   try{
     AC=new (window.AudioContext||window.webkitAudioContext)();
     master=AC.createGain(); master.gain.value=muted?0:0.55; master.connect(AC.destination);
@@ -145,6 +148,9 @@ function initAudio(){
     o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(master);
     o1.start(); o2.start(); lfo.start(); ambOsc=o1;
   }catch(e){}
+  }
+  bgmEl.muted=muted;
+  if(bgmEl.paused){ bgmEl.play().catch(()=>{}); }
 }
 function tone(f0,f1,dur,type,vol,delay){
   if(!AC) return;
@@ -182,7 +188,7 @@ const sfx={
   finale(){ [523,659,784,1046,1318,1568].forEach((f,i)=>tone(f,f,0.3,'square',0.16,i*0.13)); [523,659,784].forEach((f,i)=>tone(f*2,f*2,0.6,'sine',0.1,0.8+i*0.05)); },
   ui(){ tone(880,1100,0.06,'square',0.08); }
 };
-function setMuted(m){ muted=m; localStorage.setItem('ns_mute',m?'1':'0'); if(master) master.gain.value=m?0:0.55; document.getElementById('muteBtn').innerHTML=m?'&#128263;':'&#128266;'; }
+function setMuted(m){ muted=m; localStorage.setItem('ns_mute',m?'1':'0'); if(master) master.gain.value=m?0:0.55; bgmEl.muted=m; document.getElementById('muteBtn').innerHTML=m?'&#128263;':'&#128266;'; }
 
 /* ---------------- renderer / scene / camera / post ---------------- */
 let renderer,scene,camera,composer,bloomPass,finalPass,clock;
@@ -792,39 +798,64 @@ const G=(d,lane,t,v)=>({d,lane,t,v});
 const FG=(d,side,slot,t,v)=>({d,side,slot,t,v});
 const FORK_L=[-2.4,-1.05], FORK_R=[1.05,2.4];
 const LEVELS=[
-{name:'INDUCTION',bossName:'WARDEN-01',hue:0.52,speed:16,start:5,len:400,bossHp:8,phases:1,
- gates:[G(60,1,'add',1),G(95,0,'add',1),G(130,1,'add',1),G(165,2,'add',1),G(200,1,'add',1),G(235,0,'add',1),G(270,2,'add',1),G(305,1,'add',1),G(340,0,'add',1)]},
-{name:'FIRST SPARK',bossName:'BULWARK',hue:0.48,speed:17,start:5,len:440,bossHp:15,phases:1,
- gates:[G(70,1,'add',2),G(115,0,'add',3),G(160,1,'mul',2),G(205,1,'sub',5),G(250,2,'add',4),G(295,1,'add',3),G(340,0,'add',2)]},
-{name:'CROSSROADS',bossName:'TRIAX',hue:0.85,speed:18,start:5,len:480,bossHp:26,phases:1,
- gates:[G(70,1,'add',3),G(125,0,'add',5),G(125,2,'mul',2),G(180,1,'add',4),G(235,0,'add',5),G(235,2,'mul',2),G(290,1,'add',6),G(345,2,'add',4)]},
-{name:'THE GATE',bossName:'GOLIATH',hue:0.75,speed:19,start:5,len:560,bossHp:34,phases:1,
- gates:[G(70,1,'add',4),G(125,0,'mul',2),G(235,1,'mul',0.5),G(290,2,'add',6),G(400,0,'mul',2),G(455,1,'add',5),G(500,2,'add',4)],
- obstacles:[{type:'gap',d:180,open:1},{type:'barrier',d:345,lanes:[1,2]}]},
-{name:'THE HINGE',bossName:'HINGE PRIME',hue:0.09,speed:22,start:5,len:900,bossHp:62,phases:2,
- gates:[G(80,1,'add',5),G(140,0,'mul',2),G(200,1,'sub',10),G(260,2,'add',8),G(620,1,'add',10),G(690,2,'add',15),G(760,1,'sub',12),G(830,0,'add',8)],
- forks:[{d0:320,d1:560,gates:[FG(360,'L',0,'mul',2),FG(430,'L',1,'sub',8),FG(500,'L',0,'add',10),FG(360,'R',0,'add',6),FG(430,'R',1,'add',6),FG(500,'R',0,'mul',2)]}]},
-{name:'MIRAGE PROTOCOL',bossName:'MIRAGE',hue:0.95,speed:24,start:5,len:1080,bossHp:105,phases:2,
- gates:[G(80,1,'add',6),G(150,0,'add',8),G(220,1,'add',8),G(300,0,'mul',2),G(300,1,'mul',0.5),G(300,2,'mul',2),G(380,1,'add',10),G(600,0,'mul',0.5),G(600,1,'mul',2),G(600,2,'mul',0.5),G(680,2,'add',12),G(850,0,'add',20),G(850,1,'mul',0.5),G(850,2,'add',20),G(930,1,'add',15),G(1000,2,'sub',20),G(1040,1,'add',15)],
- obstacles:[{type:'gap',d:450,open:0},{type:'gap',d:510,open:2}],
- hazards:[{d:760,len:60,lane:1}]},
-{name:'OVERCLOCK',bossName:'DREADNOUGHT',hue:0.62,speed:26,start:5,len:1350,bossHp:260,phases:2,
- gates:[G(90,1,'add',10),G(160,2,'add',10),G(230,1,'mul',2),G(300,0,'sub',20),G(370,1,'add',20),G(450,0,'add',20),G(530,2,'mul',3),G(690,2,'add',20),G(770,1,'sub',40),G(850,0,'add',30),G(930,1,'add',30),G(1180,0,'add',40),G(1180,2,'mul',2),G(1250,0,'add',40),G(1250,2,'sub',60)],
- hazards:[{d:610,len:60,lane:1}]},
-{name:'TRIUNE',bossName:'TRIUNE CORE',hue:0.35,speed:27,start:5,len:1500,bossHp:330,phases:3,
- gates:[G(90,1,'add',10),G(160,1,'mul',2),G(230,0,'add',15),G(620,1,'add',20),G(700,2,'sub',30),G(1100,1,'add',25),G(1180,0,'add',40),G(1260,1,'sub',50),G(1340,2,'add',30)],
- forks:[{d0:300,d1:560,gates:[FG(340,'L',0,'mul',2),FG(420,'L',1,'sub',25),FG(500,'L',0,'add',20),FG(340,'R',0,'add',15),FG(420,'R',1,'add',15),FG(500,'R',0,'mul',2)]},
-        {d0:780,d1:1040,gates:[FG(820,'L',0,'add',20),FG(900,'L',0,'mul',2),FG(980,'L',1,'sub',30),FG(820,'R',0,'mul',2),FG(900,'R',1,'add',20),FG(980,'R',0,'add',20)]}]},
-{name:'REDLINE',bossName:'VELOCITY',hue:0.0,speed:29,start:5,len:1750,bossHp:520,phases:3,
- gates:[G(90,1,'add',15),G(150,0,'mul',2),G(210,1,'sub',20),G(270,2,'add',20),G(330,1,'add',25),G(390,0,'sub',40),G(450,1,'add',25),G(640,2,'mul',2),G(700,1,'sub',60),G(760,0,'add',30),G(910,2,'add',30),G(970,0,'add',40),G(1030,1,'sub',80),G(1090,2,'add',40),G(1150,1,'add',40),G(1220,0,'mul',0.5),G(1220,1,'mul',2),G(1220,2,'sub',100),G(1300,0,'add',50),G(1380,1,'sub',120),G(1460,2,'add',50),G(1540,1,'add',50),G(1620,0,'add',60)],
- obstacles:[{type:'gap',d:510,open:0},{type:'gap',d:570,open:2}],
- hazards:[{d:820,len:70,lane:1}]},
-{name:'OMEGA GAUNTLET',bossName:'OMEGA CORE',hue:0.55,speed:31,start:5,len:2100,bossHp:950,phases:4,
- gates:[G(90,1,'add',20),G(150,2,'mul',2),G(210,1,'sub',30),G(270,0,'add',25),G(700,1,'add',30),G(760,2,'sub',80),G(820,0,'mul',2),G(1420,1,'add',50),G(1480,0,'sub',150),G(1540,1,'add',60),G(1600,1,'sub',150),G(1660,2,'add',60),G(1740,0,'sub',200),G(1740,1,'mul',2),G(1740,2,'mul',0.5),G(1820,0,'add',80)],
- obstacles:[{type:'gap',d:880,open:1}],
- hazards:[{d:940,len:70,lane:0}],
- forks:[{d0:340,d1:640,gates:[FG(380,'L',0,'add',25),FG(460,'L',0,'mul',2),FG(540,'L',1,'sub',50),FG(380,'R',0,'mul',2),FG(450,'R',1,'sub',60),FG(520,'R',0,'add',30),FG(600,'R',1,'sub',40)]},
-        {d0:1020,d1:1360,gates:[FG(1060,'L',0,'mul',2),FG(1140,'L',1,'sub',100),FG(1220,'L',0,'add',50),FG(1300,'L',1,'mul',0.5),FG(1060,'R',0,'add',40),FG(1140,'R',1,'add',40),FG(1220,'R',0,'mul',2),FG(1300,'R',1,'sub',80)]}]}
+{name:'INDUCTION',bossName:'WARDEN-01',hue:0.52,speed:20,start:5,len:420,bossHp:16,phases:1,
+ gates:[G(45,1,'add',1),G(70,0,'add',1),G(95,1,'add',2),G(120,2,'add',1),G(145,1,'add',2),G(170,0,'add',1),G(195,2,'add',2),G(220,1,'add',1),G(245,0,'add',2),G(270,1,'add',1),G(295,2,'add',2),G(320,0,'add',1),G(345,1,'add',2),G(370,2,'add',1),G(395,1,'add',2)]},
+{name:'FIRST SPARK',bossName:'BULWARK',hue:0.48,speed:23,start:5,len:460,bossHp:75,phases:1,
+ gates:[G(45,1,'add',2),G(75,0,'add',3),G(105,1,'mul',2),G(135,1,'sub',5),G(165,2,'add',4),G(195,1,'add',3),G(225,0,'mul',2),G(255,1,'add',4),G(285,2,'sub',6),G(315,0,'add',5),G(345,1,'mul',2),G(375,2,'add',5),G(405,1,'add',4),G(435,0,'add',5)]},
+{name:'CROSSROADS',bossName:'TRIAX',hue:0.85,speed:26,start:5,len:500,bossHp:170,phases:1,
+ gates:[G(45,1,'add',3),G(75,0,'add',5),G(75,2,'mul',2),G(110,1,'add',4),G(140,0,'add',5),G(140,2,'mul',2),G(175,1,'add',6),G(205,2,'add',4),G(235,0,'sub',8),G(265,1,'mul',2),G(295,2,'add',6),G(325,0,'add',7),G(355,1,'sub',10),G(385,2,'mul',2),G(415,1,'add',8),G(445,0,'add',7)]},
+{name:'THE GATE',bossName:'GOLIATH',hue:0.75,speed:29,start:5,len:600,bossHp:340,phases:1,
+ gates:[G(45,1,'add',4),G(75,0,'mul',2),G(105,1,'sub',8),G(140,2,'add',6),G(175,0,'mul',2),G(175,1,'mul',0.5),G(210,2,'add',8),G(245,1,'sub',10),G(280,0,'add',9),G(315,2,'mul',2),G(350,1,'add',10),G(385,0,'sub',14),G(420,2,'mul',2),G(455,1,'add',12),G(490,0,'add',10),G(525,2,'sub',16),G(560,1,'mul',2)],
+ obstacles:[{type:'gap',d:160,open:1},{type:'barrier',d:365,lanes:[1,2]}]},
+{name:'THE HINGE',bossName:'HINGE PRIME',hue:0.09,speed:34,start:5,len:960,bossHp:5200,phases:2,
+ gates:[G(50,1,'add',5),G(80,0,'mul',2),G(110,1,'sub',10),G(140,2,'add',8),G(170,1,'mul',2),G(200,0,'sub',12),G(230,2,'add',10),G(260,1,'add',9),
+   G(640,1,'add',10),G(670,2,'mul',2),G(700,1,'sub',14),G(730,0,'add',12),G(760,2,'add',14),G(790,1,'sub',16),G(820,0,'mul',2),G(850,1,'add',15),G(880,2,'sub',18),G(910,1,'add',16),G(940,0,'add',14)],
+ forks:[{d0:300,d1:600,gates:[
+   FG(320,'L',0,'mul',2),FG(350,'L',1,'sub',10),FG(380,'L',0,'add',12),FG(410,'L',1,'mul',2),FG(440,'L',0,'sub',12),FG(470,'L',1,'add',14),FG(500,'L',0,'mul',2),FG(530,'L',1,'add',12),FG(560,'L',0,'sub',14),
+   FG(320,'R',0,'add',9),FG(350,'R',1,'add',9),FG(380,'R',0,'mul',2),FG(410,'R',1,'sub',10),FG(440,'R',0,'add',11),FG(470,'R',1,'mul',2),FG(500,'R',0,'add',12),FG(530,'R',1,'sub',12),FG(560,'R',0,'mul',2)
+ ]}]},
+{name:'MIRAGE PROTOCOL',bossName:'MIRAGE',hue:0.95,speed:39,start:5,len:1160,bossHp:850,phases:2,
+ gates:[G(50,1,'add',6),G(80,0,'add',8),G(110,1,'add',8),G(140,0,'mul',2),G(140,1,'mul',0.5),G(140,2,'mul',2),G(175,1,'add',10),G(205,2,'sub',14),G(235,0,'add',9),G(265,1,'mul',2),G(295,2,'add',11),G(325,0,'sub',16),
+   G(640,0,'mul',0.5),G(640,1,'mul',2),G(640,2,'mul',0.5),G(670,2,'add',12),G(700,1,'sub',18),G(730,0,'add',14),G(760,2,'mul',2),G(790,1,'add',16),G(820,0,'sub',20),G(850,0,'add',20),G(850,1,'mul',0.5),G(850,2,'add',20),G(880,1,'add',15),G(910,2,'sub',20),G(940,1,'add',15),G(970,0,'mul',2),G(1000,2,'sub',24),G(1030,1,'add',18),G(1060,0,'add',20)],
+ obstacles:[{type:'gap',d:400,open:0},{type:'gap',d:460,open:2},{type:'gap',d:520,open:1}],
+ hazards:[{d:560,len:60,lane:1},{d:900,len:70,lane:0}]},
+{name:'OVERCLOCK',bossName:'DREADNOUGHT',hue:0.62,speed:45,start:5,len:1450,bossHp:6200,phases:2,
+ gates:[G(50,1,'add',10),G(80,2,'add',10),G(110,1,'mul',2),G(140,0,'sub',20),G(170,1,'add',20),G(200,0,'add',20),G(230,2,'mul',3),G(260,1,'sub',24),G(290,0,'add',22),G(320,2,'add',24),G(350,1,'mul',2),G(380,0,'sub',28),
+   G(650,2,'add',20),G(680,1,'sub',30),G(710,0,'add',25),G(740,1,'add',28),G(770,2,'mul',2),G(800,0,'sub',34),G(830,1,'add',30),G(860,2,'add',32),G(890,1,'mul',2),G(920,0,'sub',38),G(950,2,'add',34),G(980,0,'add',30),G(1180,0,'add',40),G(1180,2,'mul',2),G(1210,1,'sub',44),G(1240,0,'add',36),G(1270,2,'add',38),G(1300,1,'mul',2),G(1330,0,'sub',48),G(1360,2,'add',40),G(1390,1,'add',36),G(1420,0,'mul',2)],
+ hazards:[{d:420,len:60,lane:1},{d:1000,len:70,lane:2}]},
+{name:'TRIUNE',bossName:'TRIUNE CORE',hue:0.35,speed:52,start:5,len:1600,bossHp:180000,phases:3,
+ gates:[G(50,1,'add',10),G(80,1,'mul',2),G(110,0,'add',15),G(140,2,'sub',20),G(170,1,'add',16),G(200,0,'mul',2),G(230,2,'add',18),G(260,1,'sub',24),
+   G(640,1,'add',20),G(670,2,'sub',30),G(700,0,'mul',2),G(730,1,'add',24),G(760,2,'add',22),G(790,0,'sub',34),G(820,1,'mul',2),G(850,2,'add',26),
+   G(1160,1,'add',25),G(1190,0,'add',40),G(1220,1,'sub',50),G(1250,2,'add',30),G(1280,0,'mul',2),G(1310,1,'sub',44),G(1340,2,'add',32),G(1370,0,'add',35),G(1400,1,'mul',2),G(1430,2,'sub',48),G(1460,0,'add',36),G(1490,1,'add',34),G(1520,2,'mul',2),G(1550,0,'sub',52),G(1580,1,'add',38)],
+ forks:[{d0:300,d1:560,gates:[
+   FG(320,'L',0,'mul',2),FG(350,'L',1,'sub',25),FG(380,'L',0,'add',20),FG(410,'L',1,'mul',2),FG(440,'L',0,'sub',26),FG(470,'L',1,'add',22),FG(500,'L',0,'mul',2),FG(530,'L',1,'sub',24),
+   FG(320,'R',0,'add',15),FG(350,'R',1,'add',15),FG(380,'R',0,'mul',2),FG(410,'R',1,'add',18),FG(440,'R',0,'sub',22),FG(470,'R',1,'mul',2),FG(500,'R',0,'add',20),FG(530,'R',1,'add',20)
+ ]},
+ {d0:900,d1:1140,gates:[
+   FG(920,'L',0,'add',20),FG(950,'L',0,'mul',2),FG(980,'L',1,'sub',30),FG(1010,'L',0,'mul',2),FG(1040,'L',1,'add',25),FG(1070,'L',0,'sub',32),FG(1100,'L',1,'mul',2),
+   FG(920,'R',0,'mul',2),FG(950,'R',1,'add',20),FG(980,'R',0,'sub',28),FG(1010,'R',1,'add',22),FG(1040,'R',0,'mul',2),FG(1070,'R',1,'sub',30),FG(1100,'R',0,'add',24)
+ ]}]},
+{name:'REDLINE',bossName:'VELOCITY',hue:0.0,speed:60,start:5,len:1900,bossHp:5200,phases:3,
+ gates:[G(50,1,'add',15),G(80,0,'mul',2),G(110,1,'sub',20),G(140,2,'add',20),G(170,1,'add',25),G(200,0,'sub',40),G(230,1,'add',25),G(260,2,'mul',2),G(290,1,'sub',35),G(320,0,'add',30),
+   G(620,2,'add',30),G(650,0,'add',40),G(680,1,'sub',50),G(710,2,'add',40),G(740,1,'add',40),G(770,0,'mul',0.5),G(770,1,'mul',2),G(770,2,'sub',55),G(800,0,'add',45),G(830,1,'sub',60),G(860,2,'add',45),G(890,1,'add',45),G(920,0,'add',50),
+   G(1300,0,'add',50),G(1330,1,'sub',70),G(1360,2,'add',50),G(1390,1,'add',55),G(1420,0,'mul',2),G(1450,2,'sub',80),G(1480,0,'add',55),G(1510,1,'sub',75),G(1540,2,'add',60),G(1570,1,'add',60),G(1600,0,'mul',2),G(1630,2,'sub',90),G(1660,0,'add',65),G(1690,1,'add',62),G(1720,2,'sub',85),G(1750,0,'add',70),G(1780,1,'mul',2),G(1810,2,'add',68),G(1840,0,'sub',95),G(1870,1,'add',72)],
+ obstacles:[{type:'gap',d:360,open:0},{type:'gap',d:420,open:2},{type:'gap',d:480,open:1},{type:'gap',d:540,open:0}],
+ hazards:[{d:590,len:60,lane:1},{d:960,len:70,lane:2},{d:1230,len:60,lane:0}]},
+{name:'OMEGA GAUNTLET',bossName:'OMEGA CORE',hue:0.55,speed:70,start:5,len:2300,bossHp:800000,phases:4,
+ gates:[G(50,1,'add',20),G(80,2,'mul',2),G(110,1,'sub',30),G(140,0,'add',25),G(170,2,'add',30),G(200,1,'sub',35),G(230,0,'mul',2),G(260,2,'add',32),G(290,1,'sub',40),
+   G(650,1,'add',30),G(680,2,'sub',80),G(710,0,'mul',2),G(740,1,'add',35),G(770,2,'add',38),G(800,0,'sub',90),G(830,1,'mul',2),G(860,2,'add',40),G(890,1,'sub',95),G(920,0,'add',42),
+   G(1350,1,'add',50),G(1380,0,'sub',150),G(1410,1,'add',60),G(1440,1,'sub',150),G(1470,2,'add',60),G(1500,0,'sub',160),G(1500,1,'mul',2),G(1500,2,'mul',0.5),G(1530,0,'add',70),G(1560,1,'sub',170),G(1590,2,'add',65),G(1620,0,'mul',2),G(1650,1,'add',75),G(1680,2,'sub',180),G(1710,0,'add',80),
+   G(2000,0,'add',90),G(2030,1,'sub',200),G(2060,2,'add',85),G(2090,0,'mul',2),G(2120,1,'add',95),G(2150,2,'sub',210),G(2180,0,'add',100),G(2210,1,'mul',2),G(2240,2,'sub',220),G(2270,0,'add',110)],
+ obstacles:[{type:'gap',d:340,open:1},{type:'gap',d:960,open:0},{type:'gap',d:1730,open:2}],
+ hazards:[{d:400,len:70,lane:0},{d:1000,len:70,lane:2},{d:1770,len:80,lane:1}],
+ forks:[{d0:340,d1:640,gates:[
+   FG(360,'L',0,'add',25),FG(390,'L',0,'mul',2),FG(420,'L',1,'sub',50),FG(450,'L',0,'add',28),FG(480,'L',1,'mul',2),FG(510,'L',0,'sub',55),FG(540,'L',1,'add',30),FG(570,'L',0,'mul',2),FG(600,'L',1,'sub',60),
+   FG(360,'R',0,'mul',2),FG(390,'R',1,'sub',60),FG(420,'R',0,'add',30),FG(450,'R',1,'mul',2),FG(480,'R',0,'sub',65),FG(510,'R',1,'add',32),FG(540,'R',0,'mul',2),FG(570,'R',1,'sub',70),FG(600,'R',0,'add',35)
+ ]},
+ {d0:1020,d1:1320,gates:[
+   FG(1040,'L',0,'mul',2),FG(1070,'L',1,'sub',100),FG(1100,'L',0,'add',50),FG(1130,'L',1,'mul',0.5),FG(1160,'L',0,'mul',2),FG(1190,'L',1,'sub',110),FG(1220,'L',0,'add',55),FG(1250,'L',1,'mul',2),FG(1280,'L',0,'sub',120),
+   FG(1040,'R',0,'add',40),FG(1070,'R',1,'add',40),FG(1100,'R',0,'mul',2),FG(1130,'R',1,'sub',90),FG(1160,'R',0,'add',45),FG(1190,'R',1,'mul',2),FG(1220,'R',0,'sub',100),FG(1250,'R',1,'add',48),FG(1280,'R',0,'mul',2)
+ ]}]}
 ];
 
 /* ---------------- level lifecycle ---------------- */
