@@ -2,7 +2,7 @@
 
 A lane-based mob growth runner in a rain-slicked cyberpunk megacity. Steer a swarm of chrome runner-bots through multiplier gates, dodge danger gates, and slam the horde into a boss mech at the end of every sector.
 
-**Play:** open `index.html` in a browser, or hit the live link (Vercel deploy).
+**Play:** https://neon-swarm-ten.vercel.app (or just open `index.html` in a browser).
 
 ## The loop
 
